@@ -787,15 +787,15 @@
           emptyDir: {}
         {{- $root := . }}
         {{- range .Values.volumes }}
+          {{- if or (eq .type "secret") (eq .type "configMap") }}
         - name: {{ tpl (.name) $root | replace "." "-" }}
-          {{- if and (ne .type "secret") (ne .type "configMap") }}
-          {{- if eq .type "secret" }}
+            {{- if eq .type "secret" }}
           secret:
             secretName: {{ tpl (.name) $root }}
-          {{- else if eq .type "configMap" }}
+            {{- else if eq .type "configMap" }}
           configMap:
             name: {{ tpl (.name) $root }}
-          {{- end }}
+            {{- end }}
           {{- end }}
         {{- end }}
         {{- if .Values.deployment.additionalVolumes }}

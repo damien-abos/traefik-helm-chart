@@ -197,6 +197,36 @@ tests:
       - equal:
           path: spec.template.spec.containers[0].volumeMounts[2].name
           value: certs-traefik-io
+  - it: should support additionalVolumes and volumes mountPath
+    set:
+      volumes:
+        - name: etc-ssl-certs
+          mountPath: "/etc/ssl/certs"
+      deployment:
+        additionalVolumes:
+          - name: etc-ssl-certs
+            hostPath:
+              path: "/etc/ssl/certs"
+              type: Directory
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes[2].name
+          value: etc-ssl-certs
+      - equal:
+          path: spec.template.spec.volumes[2].hostPath.path
+          value: "/etc/ssl/certs"
+      - equal:
+          path: spec.template.spec.volumes[2].hostPath.type
+          value: Directory  
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts[2].name
+          value: etc-ssl-certs
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts[2].mountPath
+          value: "/etc/ssl/certs"
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts[2].readOnly
+          value: true
   - it: should have imagePullPolicy with specified value
     set:
       image:
